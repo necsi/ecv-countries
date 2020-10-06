@@ -5,7 +5,7 @@ name: Update Countries plots
 #test
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   schedule:
     - cron: '10 */6 * * *'
 
@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@main
+    - uses: actions/checkout@master
       with:
         persist-credentials: false 
         fetch-depth: 0 
@@ -53,6 +53,6 @@ jobs:
         git fetch
         git pull   
     - name: Push changes
-      uses: ad-m/github-push-action@main
+      uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
