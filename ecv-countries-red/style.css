@@ -1,0 +1,13 @@
+.overlay {
+    fill: none;
+    pointer-events: all;
+  }
+  
+  .focus text {
+    font-size: 8px;
+  }
+  
+  .tooltip {
+    fill: white;
+    stroke: #000;
+  }
