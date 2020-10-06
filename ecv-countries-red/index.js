@@ -10,12 +10,12 @@ var margin = {top: 58, right: 30, bottom: 58, left: 30},
 
   var data = [];  // storing based on color 
   for(var i = 0; i < dataset.length; i++){
-    if(dataset[i].color == 'green'){
+    if(dataset[i].color == 'red'){
       data.push(dataset[i]);
     }
   }
   var dataOrganized = d3.nest() // organize all data by country 
-    .key(function(d) { if(d.color == 'green'){ return d.country;}})  // keys are country, values are the data associated w the country
+    .key(function(d) { if(d.color == 'red'){ return d.country;}})  // keys are country, values are the data associated w the country
     .entries(data);
     //console.log(data);
   //all x axis scales are the same 
