@@ -5,7 +5,7 @@ name: Update Countries plots
 #test
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   schedule:
     - cron: '10 */6 * * *'
 
