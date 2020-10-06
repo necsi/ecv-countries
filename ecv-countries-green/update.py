@@ -478,7 +478,9 @@ fig = go.Figure(data=data, layout=layout)
 #fig.write_html("countries.html",config=dict(
 #              displayModeBar=False), default_height = '550px', default_width = '900px' )
 
-fig.write_html(r'C:\Users\Administrator\Desktop\country_colors\countries.html',config=dict(
+#fig.write_html(r'C:\Users\Administrator\Desktop\country_colors\countries.html',config=dict(
+#               displayModeBar=False), default_height = '550px', default_width = '900px' )
+fig.write_html(r'ecv-countries-green/index.html',config=dict(
                displayModeBar=False), default_height = '550px', default_width = '900px' )
 
 
