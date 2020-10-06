@@ -5,3 +5,4 @@ xlrd==1.2.0
 requests==2.23.0
 lxml==4.5.2
 bs4==0.0.1
+plotly==4.11.0
