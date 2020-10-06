@@ -413,11 +413,11 @@ country_final['country'] = country_final['country'].replace(countryrename)
 ## Remove the 'cases' column to match format of Era's state result file 
 result = country_final[['country','date','new_cases','avg_cases','total_cases','recent_new','color']]
 
-result.to_csv(r'C:\Users\Administrator\Desktop\country_plots_green\result.csv' , index=False)
+result.to_csv(r'ecv-countries-green/result.csv' , index=False)
 
-result.to_csv(r'C:\Users\Administrator\Desktop\country_plots_orange\result.csv' , index=False)
+result.to_csv(r'ecv-countries-green/result.csv' , index=False)
 
-result.to_csv(r'C:\Users\Administrator\Desktop\country_plots_red\result.csv' , index=False)
+result.to_csv(r'ecv-countries-green/result.csv' , index=False)
 
 
 # In[198]:
