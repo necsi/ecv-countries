@@ -49,9 +49,8 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git commit --allow-empty -m "Auto-update of the data packages" -a
-        git pull origin FixForBug
-        git push origin FixForBug
-        git fetch
+        git config pull.rebase false
+        #git fetch
         git pull   
     - name: Push changes
       uses: ad-m/github-push-action@master
