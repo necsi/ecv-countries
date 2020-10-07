@@ -17,8 +17,8 @@ from datetime import datetime
 # In[150]:
 
 
-#df = pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv')
-df = pd.read_csv(r'test.csv')
+df = pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv')
+#df = pd.read_csv(r'test.csv')
 focus = df.copy().drop(['Lat','Long'], axis=1).set_index(['Country/Region','Province/State'])
 confirm = focus.groupby('Country/Region').sum().reset_index()
 
