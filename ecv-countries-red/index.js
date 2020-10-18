@@ -1,5 +1,5 @@
 //var margin = {top: 50, right: 20, bottom: 50, left: 20},
-var margin = {top: 58, right: 30, bottom: 58, left: 30},
+var margin = {top: 58, right: 38, bottom: 58, left: 33},
 //var margin = {top: 50, right: 30, bottom: 50, left: 30},
     width = 270 - margin.left - margin.right,
     height = 220 - margin.top - margin.bottom;
@@ -88,7 +88,7 @@ var margin = {top: 58, right: 30, bottom: 58, left: 30},
     // creates box to hold text 
     focus.append("rect")
       .attr("class", "tooltip")
-      .attr("width", 80)
+      .attr("width", 95)
       .attr("height", 50)
       .attr("x", -25)
       .attr("y", -55)
