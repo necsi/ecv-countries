@@ -242,7 +242,7 @@ tod = pd.to_datetime('today')
 idx = pd.date_range('01-22-2020', tod)
 df_t = df_t.groupby(df_t.index).sum()
 df_t.index = pd.to_datetime(df_t.index, dayfirst=True)
-new_thailand = df_t.reindex(idx, fill_value=0).drop(['no','age'], axis = 1)
+new_thailand = df_t.reindex(idx, fill_value=0)
 
 
 # In[24]:
