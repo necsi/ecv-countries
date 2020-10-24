@@ -244,6 +244,10 @@ df_t = df_t.groupby(df_t.index).sum()
 df_t.index = pd.to_datetime(df_t.index, dayfirst=True)
 new_thailand = df_t.reindex(idx, fill_value=0)
 
+# Oct 13 fix: 
+# add in 3 cases of local transmission missing from our filter because "nationality" is Myanmar/Burma rather than "Thailand"
+man1 = pd.to_datetime('2020-10-13')
+new_thailand.loc[man1,'new'] = 3
 
 # In[24]:
 
