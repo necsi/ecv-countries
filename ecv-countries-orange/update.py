@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 import csv
 import json
 import requests
-from datetime import datetime
+import datetime
 
 import re
 import matplotlib.dates as mdates
@@ -607,6 +607,9 @@ countryrename = {'Taiwan*' : 'Taiwan',
 
 country_final['country'] = country_final['country'].replace(countryrename)
 
+#adding 1 day to reflect latest data
+
+country_final['date'] = country_final['date'] + datetime.timedelta(days=1)
 
 # In[68]:
 
