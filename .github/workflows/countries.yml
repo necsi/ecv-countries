@@ -4,10 +4,10 @@
 name: Update Countries plots
 
 on:
-  push:
-    branches: [ master ]
+  #push:
+    #branches: [ master ]
   schedule:
-    - cron: '15 5 * * *'
+    - cron: '15 6 * * *'
 
 jobs:
   build:
