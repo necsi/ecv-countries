@@ -268,6 +268,75 @@ pivot_cases.update(new_thailand)
 pivot_cases['Thailand']
 
 
+### Australia correction (only local transmission)
+
+
+with urllib.request.urlopen('https://atlas.jifo.co/api/connectors/ba66fc4e-9f3a-43f7-bd7c-190a6f89f183') as url:
+    data = json.loads(url.read().decode())
+result = pd.DataFrame(data)
+
+# empty dataframe with columns to append state data
+oz_states = pd.DataFrame(columns = ['Overseas','Known Local','Unknown Local (Community)','Interstate travel','Under investigation','state'])
+
+ab = 0
+for d in data['sheetNames']:
+    df = result[result['sheetNames']==d]
+    focus = pd.DataFrame(df['data'][ab],columns=df['data'][ab][0])
+    ab = ab + 1
+    focus = focus.iloc[1:].set_index('')
+    focus.index.name = None
+    #focus = focus.rename({focus.columns(0): 'Overseas', focus.columns(1): 'Known Local', focus.columns(2): 'Unknown Local (Community)', focus.columns(3): 'Interstate travel', focus.columns(4): 'Under investigation'}, axis=1)
+    focus.columns = ['Overseas','Known Local','Unknown Local (Community)','Interstate travel','Under investigation']
+    focus.replace('', 0, inplace=True)
+    focus = focus.astype(float)
+    focus['state'] = d
+    oz_states = oz_states.append(focus)
+
+oz_states = oz_states.reset_index()
+
+# split day/month
+oz_states['day'], oz_states['month'] = oz_states['index'].str.split('/', 1).str
+
+# convert date column
+oz_states[['day', 'month']] = oz_states[['day', 'month']].astype(int)
+
+# add year
+oz_states['year'] = 2020
+
+# new date column
+oz_states['date'] = pd.to_datetime(oz_states[['year', 'month', 'day']])
+
+# drop extra columns
+oz_states.drop(columns = ['index', 'day', 'month', 'year'], inplace = True)
+
+# group by date for Australia-wide cases
+oz_total = oz_states.groupby('date').sum()
+
+
+# all cases
+oz_total['all_cases'] = oz_total.sum(axis=1)
+
+# all cases not imported from overseas
+oz_total['no_overseas'] = oz_total['all_cases'] - oz_total['Overseas']
+
+## local cases excluding cases from interstate travel
+#oz_total['local_no_interstate'] = oz_total['no_overseas']-oz_total['Interstate travel']
+
+## only local cases with unknown origin or those under investigation (i.e. excluding known local cases)
+#oz_total['unknown_ui'] = oz_total['local_no_interstate']-oz_total['Known Local']
+
+
+# cumulative sum of non-overseas cases
+oz_total['Australia'] = oz_total['no_overseas'].cumsum()
+
+new_oz = oz_total['Australia']
+
+pivot_cases.update(new_oz)
+
+# Check Australia update
+pivot_cases['Australia']
+
+
 # ## End of countries corrections
 
 # In[26]:
