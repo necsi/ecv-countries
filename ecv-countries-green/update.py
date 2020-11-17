@@ -209,12 +209,12 @@ new_nz = focus_nz.reindex(idx, fill_value=0)
 
 
 # create new column 'New Zealand' with cumulative cases for the purpose of updating New Zealand column in pivot_cases
-#new_nz['New Zealand'] = new_nz['new'].cumsum()
+new_nz['New Zealand'] = new_nz['new'].cumsum()
 
 # only include 'New Zealand' column
-#new_nz = new_nz[['New Zealand']]
+new_nz = new_nz[['New Zealand']]
 
-#pivot_cases.update(new_nz)
+pivot_cases.update(new_nz)
 
 
 # In[22]:
