@@ -22,6 +22,8 @@ import datetime
 import urllib
 
 import re
+import requests
+from io import StringIO
 import matplotlib.dates as mdates
 import time
 
@@ -187,32 +189,32 @@ pivot_cases['Kosovo']
 
 
 # New Zealand data
-#t = requests.get('https://www.health.govt.nz/our-work/diseases-and-conditions/covid-19-novel-coronavirus/covid-19-current-situation/covid-19-current-cases/covid-19-current-cases-details').text
-#filename = re.findall('system(.+?)\.xlsx', t)
-#url = 'https://www.health.govt.nz/system'+filename[0]+'.xlsx'
-#urlData = requests.get(url).content
-#df_nz = pd.read_excel(urlData, skiprows=[0,1])
-
-#nz = df_nz[['Date notified of potential case','Overseas travel']]
-#nz['new'] = 1
-#nz = nz[nz['Overseas travel'] != 'Yes']
-#tod = pd.to_datetime('today')
-#idx = pd.date_range('02-26-2020', tod)
-#focus_nz = nz.groupby(['Date notified of potential case']).sum()
-#focus_nz.index = pd.to_datetime(focus_nz.index, dayfirst=True)
-#new_nz = focus_nz.reindex(idx, fill_value=0)
+t = requests.get('https://www.health.govt.nz/our-work/diseases-and-conditions/covid-19-novel-coronavirus/covid-19-data-and-statistics/covid-19-case-demographics').text
+filename = re.findall('system(.+?)\.csv', t)
+url = 'https://www.health.govt.nz/system'+filename[0]+'.csv'
+urlData = requests.get(url).content
+s=str(urlData,'utf-8')
+data = StringIO(s)
+df_nz=pd.read_csv(data)
+df_nz['new']=1
+df_nz = df_nz[df_nz['Overseas travel'] != 'Yes']
+tod = pd.to_datetime('today')
+idx = pd.date_range('02-26-2020', tod)
+focus_nz = df_nz.groupby(['Report Date']).sum()
+focus_nz.index = pd.to_datetime(focus_nz.index, dayfirst=True)
+new_nz = focus_nz.reindex(idx, fill_value=0)
 
 
 # In[21]:
 
 
 # create new column 'New Zealand' with cumulative cases for the purpose of updating New Zealand column in pivot_cases
-#new_nz['New Zealand'] = new_nz['new'].cumsum()
+new_nz['New Zealand'] = new_nz['new'].cumsum()
 
 # only include 'New Zealand' column
-#new_nz = new_nz[['New Zealand']]
+new_nz = new_nz[['New Zealand']]
 
-#pivot_cases.update(new_nz)
+pivot_cases.update(new_nz)
 
 
 # In[22]:
