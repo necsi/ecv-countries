@@ -236,6 +236,9 @@ filenames = re.findall('https:(.+?)\.xlsx', t)
 url = 'https:' + filenames[0] + '.xlsx'
 df_t = pd.read_excel(url)
 
+# fix bad year in 2563-11-21 to 2020-11-21
+df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'2563':'2020'},regex=True)
+
 df_t = df_t.set_index([df_t.columns[6]])
 df_t.index.name = None
 df_t = df_t[df_t[df_t.columns[3]]=='Thailand']
