@@ -60,7 +60,7 @@ var margin = {top: 58, right: 30, bottom: 58, left: 30},
     .append("g")
     // .attr("transform", "translate(0," + height + ")")
     .attr("transform", "translate(0," + (height-10)+ ")")
-    .style("font-size", "10px")
+    .style("font-size", "8px") // font size for dates
     .call(d3.axisBottom(x).tickFormat(d3.timeFormat("%b"))); // plotting x axis for each svg plot
   svg
     .append("path") // plotting line for each svg plot
