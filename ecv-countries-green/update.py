@@ -57,7 +57,7 @@ do_not_include = ['Antigua and Barbuda', 'Angola', 'Benin', 'Botswana',
                   'Saint Vincent and the Grenadines', 'Sao Tome and Principe',
                   'Seychelles', 'Sierra Leone', 'South Sudan', 'Suriname', 'Syria', 
                   'Tanzania',   'Togo', 'Uganda', 'West Bank and Gaza',
-                  'Western Sahara', 'Yemen', 'Zambia', 'Zimbabwe']
+                  'Yemen', 'Zambia', 'Zimbabwe']
 
 
 # In[5]:
