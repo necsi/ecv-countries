@@ -113,7 +113,7 @@ pivot_cases = pivot_cases.drop(columns=do_not_include)
 pivot_cases
 
 
-# # Kosovo correction
+# # Kosovo correction - ERROR since 12/18/2020, now file has only weekly data, commenting out..
 
 # In[12]:
 
@@ -121,45 +121,45 @@ pivot_cases
 ## Kosovo correction using European CDC data
 
 # read in data
-eurocdc = pd.read_csv("https://opendata.ecdc.europa.eu/covid19/casedistribution/csv")
+#eurocdc = pd.read_csv("https://opendata.ecdc.europa.eu/covid19/casedistribution/csv")
 
 # add date column from year, month & day columns
-eurocdc['date'] = pd.to_datetime(eurocdc[["year", "month", "day"]])
+#eurocdc['date'] = pd.to_datetime(eurocdc[["year", "month", "day"]])
 
 
 # In[13]:
 
 
 # filter for Kosovo
-kosovo = eurocdc[eurocdc['countriesAndTerritories'] == 'Kosovo']
+#kosovo = eurocdc[eurocdc['countriesAndTerritories'] == 'Kosovo']
 
 
 # In[14]:
 
 
-kosovo
+#kosovo
 
 
 # In[15]:
 
 
 # only include date & cases columns ('cases' indicates daily new cases)
-kosovo = kosovo[['date', 'cases']]
+#kosovo = kosovo[['date', 'cases']]
 
 # sort by date and set date as index
-kosovo = kosovo.sort_values('date').set_index('date')
+#kosovo = kosovo.sort_values('date').set_index('date')
 
 # create new column 'Kosovo' with cumulative cases for the purpose of updating Kosovo column in pivot_cases
-kosovo['Kosovo'] = kosovo['cases'].cumsum()
+#kosovo['Kosovo'] = kosovo['cases'].cumsum()
 
 # only include 'Kosovo' column
-kosovo = kosovo[['Kosovo']]
+#kosovo = kosovo[['Kosovo']]
 
 
 # In[16]:
 
 
-kosovo
+#kosovo
 
 
 # In[17]:
@@ -167,21 +167,20 @@ kosovo
 
 # update JHU values for Kosovo with European CDC values
 # https://stackoverflow.com/questions/24768657/replace-column-values-based-on-another-dataframe-python-pandas-better-way
-pivot_cases.update(kosovo)
+#pivot_cases.update(kosovo)
 
 
 # In[18]:
 
 
-pivot_cases
+#pivot_cases
 
 
 # In[19]:
 
 
 # check to see if cases were properly updated for each date
-pivot_cases['Kosovo']
-
+#pivot_cases['Kosovo']
 
 # # New Zealand correction (only local transmission)
 
