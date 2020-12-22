@@ -238,22 +238,33 @@ df_t = pd.read_excel(url)
 
 # fix bad year from dates 2563-11-21 and 1963-10-17 to 2020
 df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'[0-9][0-9][0-9][0-9]':'2020'},regex=True)
-
+df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'15/15':'15/12'},regex=True)
 df_t = df_t.set_index([df_t.columns[6]])
 df_t.index.name = None
-df_t = df_t[df_t[df_t.columns[3]]=='Thailand']
-df_t['new'] = 0
-df_t.loc[pd.isna(df_t[df_t.columns[8]]),'new'] = 1
+
+# The nationality column is not important
+#df_t = df_t[df_t[df_t.columns[3]]=='Thailand']
+
+df_t['new'] = 1
+#df_t.loc[pd.isna(df_t[df_t.columns[8]]),'new'] = 1
+
+df_t.loc[df_t[df_t.columns[8]]=='ผู้ที่เดินทางมาจากต่างประเทศ และเข้า OQ','new'] = 0
+df_t.loc[df_t[df_t.columns[8]]=='ผู้ที่เดินทางมาจากต่างประเทศ และเข้า ASQ/ALQ','new'] = 0
+df_t.loc[df_t[df_t.columns[8]]=='State Quarantine','new'] = 0
+df_t.loc[df_t[df_t.columns[8]]=='คนต่างชาติเดินทางมาจากต่างประเทศ','new'] = 0
+
+
 tod = pd.to_datetime('today')
 idx = pd.date_range('01-22-2020', tod)
 df_t = df_t.groupby(df_t.index).sum()
 df_t.index = pd.to_datetime(df_t.index, dayfirst=True)
+df_t = df_t[1:]
 new_thailand = df_t.reindex(idx, fill_value=0)
 
 # Oct 13 fix: 
 # add in 3 cases of local transmission missing from our filter because "nationality" is Myanmar/Burma rather than "Thailand"
-man1 = pd.to_datetime('2020-10-13')
-new_thailand.loc[man1,'new'] = 3
+#man1 = pd.to_datetime('2020-10-13')
+#new_thailand.loc[man1,'new'] = 3
 
 # In[24]:
 
