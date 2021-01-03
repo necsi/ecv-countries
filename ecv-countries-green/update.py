@@ -333,7 +333,7 @@ for d in data['sheetNames']:
     oz_states = oz_states.append(focus)
 
 # drop extra columns
-oz_states.drop(columns = ['index', 'day', 'month', 'year'], inplace = True)
+oz_states.drop(columns = ['index', 'day', 'month'], inplace = True)
 
 # group by date for Australia-wide cases
 oz_total = oz_states.groupby('date').sum()
