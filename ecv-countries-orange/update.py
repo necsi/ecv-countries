@@ -187,33 +187,38 @@ pivot_cases
 # In[20]:
 
 
+# # New Zealand correction (only local transmission)
+
+# In[20]:
+
+
 # New Zealand data
-t = requests.get('https://www.health.govt.nz/our-work/diseases-and-conditions/covid-19-novel-coronavirus/covid-19-data-and-statistics/covid-19-case-demographics').text
-filename = re.findall('system(.+?)\.csv', t)
-url = 'https://www.health.govt.nz/system'+filename[0]+'.csv'
-urlData = requests.get(url).content
-s=str(urlData,'utf-8')
-data = StringIO(s)
-df_nz=pd.read_csv(data)
-df_nz['new']=1
-df_nz = df_nz[df_nz['Overseas travel'] != 'Yes']
-tod = pd.to_datetime('today')
-idx = pd.date_range('02-26-2020', tod)
-focus_nz = df_nz.groupby(['Report Date']).sum()
-focus_nz.index = pd.to_datetime(focus_nz.index, dayfirst=True)
-new_nz = focus_nz.reindex(idx, fill_value=0)
+#t = requests.get('https://www.health.govt.nz/our-work/diseases-and-conditions/covid-19-novel-coronavirus/covid-19-data-and-statistics/covid-19-case-demographics').text
+#filename = re.findall('system(.+?)\.csv', t)
+#url = 'https://www.health.govt.nz/system'+filename[0]+'.csv'
+#urlData = requests.get(url).content
+#s=str(urlData,'utf-8')
+#data = StringIO(s)
+#df_nz=pd.read_csv(data)
+#df_nz['new']=1
+#df_nz = df_nz[df_nz['Overseas travel'] != 'Yes']
+#tod = pd.to_datetime('today')
+#idx = pd.date_range('02-26-2020', tod)
+#focus_nz = df_nz.groupby(['Report Date']).sum()
+#focus_nz.index = pd.to_datetime(focus_nz.index, dayfirst=True)
+#new_nz = focus_nz.reindex(idx, fill_value=0)
 
 
 # In[21]:
 
 
 # create new column 'New Zealand' with cumulative cases for the purpose of updating New Zealand column in pivot_cases
-new_nz['New Zealand'] = new_nz['new'].cumsum()
+#new_nz['New Zealand'] = new_nz['new'].cumsum()
 
 # only include 'New Zealand' column
-new_nz = new_nz[['New Zealand']]
+#new_nz = new_nz[['New Zealand']]
 
-pivot_cases.update(new_nz)
+#pivot_cases.update(new_nz)
 
 
 # In[22]:
@@ -221,7 +226,6 @@ pivot_cases.update(new_nz)
 
 # Check New Zealand update
 #pivot_cases['New Zealand']
-
 
 # # Thailand correction (only local transmission)
 
