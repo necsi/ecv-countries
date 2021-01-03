@@ -286,6 +286,18 @@ with urllib.request.urlopen('https://atlas.jifo.co/api/connectors/ba66fc4e-9f3a-
     data = json.loads(url.read().decode())
 result = pd.DataFrame(data)
 
+## Update to fix year for 2021:
+## Idea to was to use date (day/month) from first row of each state w 2020 as year, then increment subsequent rows by 1 day
+## Based on:
+##    Rolling date: https://stackoverflow.com/questions/59864206/pandas-increment-rolling-date
+##    Create date from y,m,d: https://stackoverflow.com/questions/58072683/combine-year-month-and-day-in-python-to-create-a-date
+## Within for loop, parse day & month to new columns; change those columns to integers
+## Set start_day & start_month based on date from each state's 1st row
+## Create 'start_date' from start_day & start_month, using 2020 as year
+## maxsize: Use len function to find number of rows in 'focus' (each state)
+## Create a 'date' column using pd.date_range to fill rows with dates from start_date for maxsize number of periods 
+
+
 # empty dataframe with columns to append state data
 oz_states = pd.DataFrame(columns = ['Overseas','Known Local','Unknown Local (Community)','Interstate travel','Under investigation','state'])
 
@@ -301,21 +313,18 @@ for d in data['sheetNames']:
     focus.replace('', 0, inplace=True)
     focus = focus.astype(float)
     focus['state'] = d
+    ## reset index & parse day/month to new columns
+    focus = focus.reset_index()
+    focus['day'], focus['month'] = focus['index'].str.split('/', 1).str
+    focus[['day', 'month']] = focus[['day', 'month']].astype(int)
+    start_day = focus['day'].head(1)
+    start_month = focus['month'].head(1)
+    ## Create date from y,m,d: https://stackoverflow.com/questions/58072683/combine-year-month-and-day-in-python-to-create-a-date
+    start_date = datetime.datetime(2020, start_month, start_day)
+    ## Rolling date: https://stackoverflow.com/questions/59864206/pandas-increment-rolling-date
+    maxsize = len(focus)
+    focus['date'] = pd.date_range(pd.to_datetime(start_date),periods=maxsize)
     oz_states = oz_states.append(focus)
-
-oz_states = oz_states.reset_index()
-
-# split day/month
-oz_states['day'], oz_states['month'] = oz_states['index'].str.split('/', 1).str
-
-# convert date column
-oz_states[['day', 'month']] = oz_states[['day', 'month']].astype(int)
-
-# add year
-oz_states['year'] = 2020
-
-# new date column
-oz_states['date'] = pd.to_datetime(oz_states[['year', 'month', 'day']])
 
 # drop extra columns
 oz_states.drop(columns = ['index', 'day', 'month', 'year'], inplace = True)
