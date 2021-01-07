@@ -2,7 +2,7 @@
 # coding: utf-8
 
 # In[1]:
-
+#
 
 # Includes correction for Kosovo with European CDC numbers
 # New Zealand & Thailand updated to only include cases from local transmission
