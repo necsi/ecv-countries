@@ -235,9 +235,9 @@ pivot_cases['New Zealand']
 # Thailand data
 url_s = 'https://data.go.th/dataset/covid-19-daily'
 t = requests.get(url_s).text
-filenames = re.findall('https:(.+?)\.xlsx', t)
-url = 'https:' + filenames[0] + '.xlsx'
-df_t = pd.read_excel(url)
+filenames = re.findall('https:(.+?)\.csv', t)
+url = 'https:' + filenames[0] + '.csv'
+df_t = pd.read_csv(url)
 
 ## fix bad year from dates 2563-11-21 and 1963-10-17 to 2020
 #df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'[0-9][0-9][0-9][0-9]':'2020'},regex=True)
