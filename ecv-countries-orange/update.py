@@ -55,8 +55,8 @@ do_not_include = ['Antigua and Barbuda', 'Angola', 'Benin', 'Botswana',
                   'MS Zaandam', 'Namibia', 'Nicaragua', 'Papua New Guinea',
                   'Rwanda',   'Saint Lucia', 
                   'Saint Vincent and the Grenadines', 'Sao Tome and Principe',
-                  'Seychelles', 'Sierra Leone', 'South Sudan', 'Suriname', 'Syria', 
-                  'Tanzania',   'Togo', 'Uganda', 'West Bank and Gaza',
+                  'Seychelles', 'Sierra Leone', 'South Sudan', 'Sudan', 'Suriname', 'Syria', 
+                  'Tanzania', 'Tajikistan', 'Togo', 'Uganda', 'West Bank and Gaza',
                   'Yemen', 'Zambia', 'Zimbabwe']
 
 
