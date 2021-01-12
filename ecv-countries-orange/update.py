@@ -237,8 +237,8 @@ url_s = 'https://data.go.th/dataset/covid-19-daily'
 t = requests.get(url_s).text
 filenames = re.findall('https:(.+?)\.csv', t)
 url = 'https:' + filenames[0] + '.csv'
-df_t = pd.read_csv(url)
 
+df_t = pd.read_csv(url)
 ## fix bad year from dates 2563-11-21 and 1963-10-17 to 2020
 #df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'[0-9][0-9][0-9][0-9]':'2020'},regex=True)
 #df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'15/15':'15/12'},regex=True)
@@ -261,11 +261,13 @@ df_t.loc[df_t[df_t.columns[8]]=='คนต่างชาติเดินท�
 
 tod = pd.to_datetime('today')
 idx = pd.date_range('01-22-2020', tod)
+df_t.index = pd.to_datetime(df_t.index)
 df_t = df_t.groupby(df_t.index).sum()
-df_t.index = pd.to_datetime(df_t.index, dayfirst=True)
+#df_t.index = pd.to_datetime(df_t.index)
 df_t = df_t.sort_index()
-df_t = df_t[1:-1]
+df_t = df_t[1:]
 new_thailand = df_t.reindex(idx, fill_value=0)
+new_thailand = new_thailand[1:-2]
 
 # In[24]:
 
