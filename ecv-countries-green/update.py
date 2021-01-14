@@ -197,10 +197,10 @@ s=str(urlData,'utf-8')
 data = StringIO(s)
 df_nz=pd.read_csv(data)
 df_nz['new']=1
-df_nz = df_nz[df_nz['Overseas travel'] != 'Yes']
+df_nz = df_nz[df_nz['Overseas'] != 'Yes']
 tod = pd.to_datetime('today')
 idx = pd.date_range('02-26-2020', tod)
-focus_nz = df_nz.groupby(['Report Date']).sum()
+focus_nz = df_nz.groupby(['ReportDate']).sum()
 focus_nz.index = pd.to_datetime(focus_nz.index, dayfirst=True)
 new_nz = focus_nz.reindex(idx, fill_value=0)
 
