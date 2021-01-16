@@ -201,10 +201,10 @@ s=str(urlData,'utf-8')
 data = StringIO(s)
 df_nz=pd.read_csv(data)
 df_nz['new']=1
-df_nz = df_nz[df_nz['Overseas'] != 'Yes']
+df_nz = df_nz[df_nz['Overseas travel'] != 'Yes']
 tod = pd.to_datetime('today')
 idx = pd.date_range('02-26-2020', tod)
-focus_nz = df_nz.groupby(['ReportDate']).sum()
+focus_nz = df_nz.groupby(['Report Date']).sum()
 focus_nz.index = pd.to_datetime(focus_nz.index, dayfirst=True)
 new_nz = focus_nz.reindex(idx, fill_value=0)
 
@@ -233,6 +233,7 @@ pivot_cases['New Zealand']
 
 
 # Thailand data
+import numpy as np
 url_s = 'https://data.go.th/dataset/covid-19-daily'
 t = requests.get(url_s).text
 filenames = re.findall('https:(.+?)\.csv', t)
@@ -244,19 +245,19 @@ df_t = pd.read_csv(url)
 #df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'15/15':'15/12'},regex=True)
 df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'2564':'2021'},regex=True)
 df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'2563':'2020'},regex=True)
-df_t = df_t.set_index([df_t.columns[6]])
+df_t = df_t.set_index(['announce_date'])
 df_t.index.name = None
-
 # The nationality column is not important
 #df_t = df_t[df_t[df_t.columns[3]]=='Thailand']
 
 df_t['new'] = 1
-#df_t.loc[pd.isna(df_t[df_t.columns[8]]),'new'] = 1
-
-df_t.loc[df_t[df_t.columns[8]]=='ผู้ที่เดินทางมาจากต่างประเทศ และเข้า OQ','new'] = 0
-df_t.loc[df_t[df_t.columns[8]]=='ผู้ที่เดินทางมาจากต่างประเทศ และเข้า ASQ/ALQ','new'] = 0
-df_t.loc[df_t[df_t.columns[8]]=='State Quarantine','new'] = 0
-df_t.loc[df_t[df_t.columns[8]]=='คนต่างชาติเดินทางมาจากต่างประเทศ','new'] = 0
+print(df_t)
+#df_t.loc[pd.isna(df_t[df_t['risk']]),'new'] = 1
+df_t['risk'] = df_t['risk'].replace(np.nan, '', regex=True)
+df_t.loc[df_t['risk']=='State Quarantine','new'] = 0
+df_t.loc[df_t['risk']=='ผู้ที่เดินทางมาจากต่างประเทศ และเข้า OQ','new'] = 0
+df_t.loc[df_t['risk']=='ผู้ที่เดินทางมาจากต่างประเทศ และเข้า ASQ/ALQ','new'] = 0
+df_t.loc[df_t['risk']=='คนต่างชาติเดินทางมาจากต่างประเทศ','new'] = 0
 
 
 tod = pd.to_datetime('today')
@@ -266,8 +267,8 @@ df_t = df_t.groupby(df_t.index).sum()
 #df_t.index = pd.to_datetime(df_t.index)
 df_t = df_t.sort_index()
 df_t = df_t[1:]
-new_thailand = df_t.reindex(idx, fill_value=0)
-new_thailand = new_thailand[1:-2]
+df_t = df_t.reindex(idx, fill_value=0)
+new_thailand = df_t[1:-2]
 
 # In[24]:
 
