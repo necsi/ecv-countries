@@ -2,7 +2,7 @@
 # coding: utf-8
 
 # In[1]:
-
+#
 
 # Includes correction for Kosovo with European CDC numbers
 # New Zealand & Thailand updated to only include cases from local transmission
@@ -189,40 +189,42 @@ pivot_cases
 
 
 # New Zealand data
-t = requests.get('https://www.health.govt.nz/our-work/diseases-and-conditions/covid-19-novel-coronavirus/covid-19-data-and-statistics/covid-19-case-demographics').text
-filename = re.findall('system(.+?)\.csv', t)
-url = 'https://www.health.govt.nz/system'+filename[0]+'.csv'
-urlData = requests.get(url).content
-s=str(urlData,'utf-8')
-data = StringIO(s)
-df_nz=pd.read_csv(data)
-df_nz['new']=1
-df_nz = df_nz[df_nz['Overseas travel'] != 'Yes']
-tod = pd.to_datetime('today')
-idx = pd.date_range('02-26-2020', tod)
-focus_nz = df_nz.groupby(['Report Date']).sum()
-focus_nz.index = pd.to_datetime(focus_nz.index, dayfirst=True)
-new_nz = focus_nz.reindex(idx, fill_value=0)
+try:
+  t = requests.get('https://www.health.govt.nz/our-work/diseases-and-conditions/covid-19-novel-coronavirus/covid-19-data-and-statistics/covid-19-case-demographics').text
+  filename = re.findall('system(.+?)\.csv', t)
+  url = 'https://www.health.govt.nz/system'+filename[0]+'.csv'
+  urlData = requests.get(url).content
+  s=str(urlData,'utf-8')
+  data = StringIO(s)
+  df_nz=pd.read_csv(data)
+  df_nz['new']=1
+  df_nz = df_nz[df_nz['Overseas travel'] != 'Yes']
+  tod = pd.to_datetime('today')
+  idx = pd.date_range('02-26-2020', tod)
+  focus_nz = df_nz.groupby(['Report Date']).sum()
+  focus_nz.index = pd.to_datetime(focus_nz.index, dayfirst=True)
+  new_nz = focus_nz.reindex(idx, fill_value=0)
 
 
-# In[21]:
+  # In[21]:
 
 
-# create new column 'New Zealand' with cumulative cases for the purpose of updating New Zealand column in pivot_cases
-new_nz['New Zealand'] = new_nz['new'].cumsum()
+  # create new column 'New Zealand' with cumulative cases for the purpose of updating New Zealand column in pivot_cases
+  new_nz['New Zealand'] = new_nz['new'].cumsum()
 
-# only include 'New Zealand' column
-new_nz = new_nz[['New Zealand']]
+  # only include 'New Zealand' column
+  new_nz = new_nz[['New Zealand']]
 
-pivot_cases.update(new_nz)
-
-
-# In[22]:
+  pivot_cases.update(new_nz)
 
 
-# Check New Zealand update
-pivot_cases['New Zealand']
+  # In[22]:
 
+
+  # Check New Zealand update
+  pivot_cases['New Zealand']
+except:
+  pass
 
 # # Thailand correction (only local transmission)
 
@@ -230,140 +232,147 @@ pivot_cases['New Zealand']
 
 
 # Thailand data
-import numpy as np
-url_s = 'https://data.go.th/dataset/covid-19-daily'
-t = requests.get(url_s).text
-filenames = re.findall('https:(.+?)\.csv', t)
-url = 'https:' + filenames[0] + '.csv'
+try:
+  url_s = 'https://data.go.th/dataset/covid-19-daily'
+  t = requests.get(url_s).text
+  filenames = re.findall('https:(.+?)\.csv', t)
+  url = 'https:' + filenames[0] + '.csv'
 
-df_t = pd.read_csv(url)
-## fix bad year from dates 2563-11-21 and 1963-10-17 to 2020
-#df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'[0-9][0-9][0-9][0-9]':'2020'},regex=True)
-#df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'15/15':'15/12'},regex=True)
-df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'24/1/0202':'1/24/2021'},regex=True)
-df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'2564':'2021'},regex=True)
-df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'2563':'2020'},regex=True)
-df_t = df_t.set_index(['announce_date'])
-df_t.index.name = None
-# The nationality column is not important
-#df_t = df_t[df_t[df_t.columns[3]]=='Thailand']
+  df_t = pd.read_csv(url)
+  ## fix bad year from dates 2563-11-21 and 1963-10-17 to 2020
+  #df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'[0-9][0-9][0-9][0-9]':'2020'},regex=True)
+  #df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'15/15':'15/12'},regex=True)
+  df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'24/1/0202':'1/24/2021'},regex=True)
+  df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'2564':'2021'},regex=True)
+  df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'2563':'2020'},regex=True)
+  df_t = df_t.set_index(['announce_date'])
+  df_t.index.name = None
+  # The nationality column is not important
+  #df_t = df_t[df_t[df_t.columns[3]]=='Thailand']
 
-df_t['new'] = 1
-print(df_t)
-#df_t.loc[pd.isna(df_t[df_t['risk']]),'new'] = 1
-df_t['risk'] = df_t['risk'].replace(np.nan, '', regex=True)
-df_t.loc[df_t['risk']=='State Quarantine','new'] = 0
-df_t.loc[df_t['risk']=='ผู้ที่เดินทางมาจากต่างประเทศ และเข้า OQ','new'] = 0
-df_t.loc[df_t['risk']=='ผู้ที่เดินทางมาจากต่างประเทศ และเข้า ASQ/ALQ','new'] = 0
-df_t.loc[df_t['risk']=='คนต่างชาติเดินทางมาจากต่างประเทศ','new'] = 0
-
-
-tod = pd.to_datetime('today')
-idx = pd.date_range('01-22-2020', tod)
-df_t.index = pd.to_datetime(df_t.index)
-df_t = df_t.groupby(df_t.index).sum()
-#df_t.index = pd.to_datetime(df_t.index)
-df_t = df_t.sort_index()
-df_t = df_t[1:]
-df_t = df_t.reindex(idx, fill_value=0)
-new_thailand = df_t[1:-2]
-
-# In[24]:
+  df_t['new'] = 1
+  print(df_t)
+  #df_t.loc[pd.isna(df_t[df_t['risk']]),'new'] = 1
+  df_t['risk'] = df_t['risk'].replace(np.nan, '', regex=True)
+  df_t.loc[df_t['risk']=='State Quarantine','new'] = 0
+  df_t.loc[df_t['risk']=='ผู้ที่เดินทางมาจากต่างประเทศ และเข้า OQ','new'] = 0
+  df_t.loc[df_t['risk']=='ผู้ที่เดินทางมาจากต่างประเทศ และเข้า ASQ/ALQ','new'] = 0
+  df_t.loc[df_t['risk']=='คนต่างชาติเดินทางมาจากต่างประเทศ','new'] = 0
 
 
-# create new column 'Thailand' with cumulative cases for the purpose of updating Thailand column in pivot_cases
-new_thailand['Thailand'] = new_thailand['new'].cumsum()
+  tod = pd.to_datetime('today')
+  idx = pd.date_range('01-22-2020', tod)
+  df_t.index = pd.to_datetime(df_t.index)
+  df_t = df_t.groupby(df_t.index).sum()
+  #df_t.index = pd.to_datetime(df_t.index)
+  df_t = df_t.sort_index()
+  df_t = df_t[1:]
+  df_t = df_t.reindex(idx, fill_value=0)
+  new_thailand = df_t[1:-2]
 
-# only include 'Thailand' column
-new_thailand = new_thailand[['Thailand']]
+  # Oct 13 fix: 
+  # add in 3 cases of local transmission missing from our filter because "nationality" is Myanmar/Burma rather than "Thailand"
+  #man1 = pd.to_datetime('2020-10-13')
+  #new_thailand.loc[man1,'new'] = 3
 
-pivot_cases.update(new_thailand)
+  # In[24]:
 
 
-# In[25]:
+  # create new column 'Thailand' with cumulative cases for the purpose of updating Thailand column in pivot_cases
+  new_thailand['Thailand'] = new_thailand['new'].cumsum()
+
+  # only include 'Thailand' column
+  new_thailand = new_thailand[['Thailand']]
+
+  pivot_cases.update(new_thailand)
 
 
-# Check Thailand update
-pivot_cases['Thailand']
+  # In[25]:
 
+
+  # Check Thailand update
+  pivot_cases['Thailand']
+except:
+  pass
 
 ### Australia correction (only local transmission)
 
+try:
+  with urllib.request.urlopen('https://atlas.jifo.co/api/connectors/ba66fc4e-9f3a-43f7-bd7c-190a6f89f183') as url:
+      data = json.loads(url.read().decode())
+  result = pd.DataFrame(data)
 
-with urllib.request.urlopen('https://atlas.jifo.co/api/connectors/ba66fc4e-9f3a-43f7-bd7c-190a6f89f183') as url:
-    data = json.loads(url.read().decode())
-result = pd.DataFrame(data)
-
-## Update to fix year for 2021:
-## Idea to was to use date (day/month) from first row of each state w 2020 as year, then increment subsequent rows by 1 day
-## Based on:
-##    Rolling date: https://stackoverflow.com/questions/59864206/pandas-increment-rolling-date
-##    Create date from y,m,d: https://stackoverflow.com/questions/58072683/combine-year-month-and-day-in-python-to-create-a-date
-## Within for loop, parse day & month to new columns; change those columns to integers
-## Set start_day & start_month based on date from each state's 1st row
-## Create 'start_date' from start_day & start_month, using 2020 as year
-## maxsize: Use len function to find number of rows in 'focus' (each state)
-## Create a 'date' column using pd.date_range to fill rows with dates from start_date for maxsize number of periods 
-
-
-# empty dataframe with columns to append state data
-oz_states = pd.DataFrame(columns = ['Overseas','Known Local','Unknown Local (Community)','Interstate travel','Under investigation','state'])
-
-ab = 0
-for d in data['sheetNames']:
-    df = result[result['sheetNames']==d]
-    focus = pd.DataFrame(df['data'][ab],columns=df['data'][ab][0])
-    ab = ab + 1
-    focus = focus.iloc[1:].set_index('')
-    focus.index.name = None
-    #focus = focus.rename({focus.columns(0): 'Overseas', focus.columns(1): 'Known Local', focus.columns(2): 'Unknown Local (Community)', focus.columns(3): 'Interstate travel', focus.columns(4): 'Under investigation'}, axis=1)
-    focus.columns = ['Overseas','Known Local','Unknown Local (Community)','Interstate travel','Under investigation']
-    focus.replace('', 0, inplace=True)
-    focus = focus.astype(float)
-    focus['state'] = d
-    ## reset index & parse day/month to new columns
-    focus = focus.reset_index()
-    focus['day'], focus['month'] = focus['index'].str.split('/', 1).str
-    focus[['day', 'month']] = focus[['day', 'month']].astype(int)
-    start_day = focus['day'].head(1)
-    start_month = focus['month'].head(1)
-    ## Create date from y,m,d: https://stackoverflow.com/questions/58072683/combine-year-month-and-day-in-python-to-create-a-date
-    start_date = datetime.datetime(2020, start_month, start_day)
-    ## Rolling date: https://stackoverflow.com/questions/59864206/pandas-increment-rolling-date
-    maxsize = len(focus)
-    focus['date'] = pd.date_range(pd.to_datetime(start_date),periods=maxsize)
-    oz_states = oz_states.append(focus)
-
-# drop extra columns
-oz_states.drop(columns = ['index', 'day', 'month'], inplace = True)
-
-# group by date for Australia-wide cases
-oz_total = oz_states.groupby('date').sum()
+  ## Update to fix year for 2021:
+  ## Idea to was to use date (day/month) from first row of each state w 2020 as year, then increment subsequent rows by 1 day
+  ## Based on:
+  ##    Rolling date: https://stackoverflow.com/questions/59864206/pandas-increment-rolling-date
+  ##    Create date from y,m,d: https://stackoverflow.com/questions/58072683/combine-year-month-and-day-in-python-to-create-a-date
+  ## Within for loop, parse day & month to new columns; change those columns to integers
+  ## Set start_day & start_month based on date from each state's 1st row
+  ## Create 'start_date' from start_day & start_month, using 2020 as year
+  ## maxsize: Use len function to find number of rows in 'focus' (each state)
+  ## Create a 'date' column using pd.date_range to fill rows with dates from start_date for maxsize number of periods 
 
 
-# all cases
-oz_total['all_cases'] = oz_total.sum(axis=1)
+  # empty dataframe with columns to append state data
+  oz_states = pd.DataFrame(columns = ['Overseas','Known Local','Unknown Local (Community)','Interstate travel','Under investigation','state'])
 
-# all cases not imported from overseas
-oz_total['no_overseas'] = oz_total['all_cases'] - oz_total['Overseas']
+  ab = 0
+  for d in data['sheetNames']:
+      df = result[result['sheetNames']==d]
+      focus = pd.DataFrame(df['data'][ab],columns=df['data'][ab][0])
+      ab = ab + 1
+      focus = focus.iloc[1:].set_index('')
+      focus.index.name = None
+      #focus = focus.rename({focus.columns(0): 'Overseas', focus.columns(1): 'Known Local', focus.columns(2): 'Unknown Local (Community)', focus.columns(3): 'Interstate travel', focus.columns(4): 'Under investigation'}, axis=1)
+      focus.columns = ['Overseas','Known Local','Unknown Local (Community)','Interstate travel','Under investigation']
+      focus.replace('', 0, inplace=True)
+      focus = focus.astype(float)
+      focus['state'] = d
+      ## reset index & parse day/month to new columns
+      focus = focus.reset_index()
+      focus['day'], focus['month'] = focus['index'].str.split('/', 1).str
+      focus[['day', 'month']] = focus[['day', 'month']].astype(int)
+      start_day = focus['day'].head(1)
+      start_month = focus['month'].head(1)
+      ## Create date from y,m,d: https://stackoverflow.com/questions/58072683/combine-year-month-and-day-in-python-to-create-a-date
+      start_date = datetime.datetime(2020, start_month, start_day)
+      ## Rolling date: https://stackoverflow.com/questions/59864206/pandas-increment-rolling-date
+      maxsize = len(focus)
+      focus['date'] = pd.date_range(pd.to_datetime(start_date),periods=maxsize)
+      oz_states = oz_states.append(focus)
 
-## local cases excluding cases from interstate travel
-#oz_total['local_no_interstate'] = oz_total['no_overseas']-oz_total['Interstate travel']
+  # drop extra columns
+  oz_states.drop(columns = ['index', 'day', 'month'], inplace = True)
 
-## only local cases with unknown origin or those under investigation (i.e. excluding known local cases)
-#oz_total['unknown_ui'] = oz_total['local_no_interstate']-oz_total['Known Local']
+  # group by date for Australia-wide cases
+  oz_total = oz_states.groupby('date').sum()
 
 
-# cumulative sum of non-overseas cases
-oz_total['Australia'] = oz_total['no_overseas'].cumsum()
+  # all cases
+  oz_total['all_cases'] = oz_total.sum(axis=1)
 
-new_oz = oz_total['Australia']
+  # all cases not imported from overseas
+  oz_total['no_overseas'] = oz_total['all_cases'] - oz_total['Overseas']
 
-pivot_cases.update(new_oz)
+  ## local cases excluding cases from interstate travel
+  #oz_total['local_no_interstate'] = oz_total['no_overseas']-oz_total['Interstate travel']
 
-# Check Australia update
-pivot_cases['Australia']
+  ## only local cases with unknown origin or those under investigation (i.e. excluding known local cases)
+  #oz_total['unknown_ui'] = oz_total['local_no_interstate']-oz_total['Known Local']
 
+
+  # cumulative sum of non-overseas cases
+  oz_total['Australia'] = oz_total['no_overseas'].cumsum()
+
+  new_oz = oz_total['Australia']
+
+  pivot_cases.update(new_oz)
+
+  # Check Australia update
+  pivot_cases['Australia']
+except:
+  pass
 
 # ## End of countries corrections
 
