@@ -442,7 +442,7 @@ pivot_avgnewcases_center = pivot_newcases.copy()
 # calculate 7-day averages of new cases with centered average
 for column in pivot_avgnewcases_center.columns[0:]:
     DaySeven = column
-    pivot_avgnewcases_center[DaySeven] = pivot_avgnewcases_center[column].rolling(window=7, min_periods=4, center=True).mean()
+    pivot_avgnewcases_center[DaySeven] = pivot_avgnewcases_center[column].rolling(window=7, min_periods=4, center=False).mean()
 
 
 # In[34]:
