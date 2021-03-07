@@ -55,7 +55,7 @@ do_not_include = ['Antigua and Barbuda', 'Angola', 'Benin', 'Botswana',
                   'MS Zaandam', 'Namibia', 'Nicaragua', 'Papua New Guinea',
                   'Rwanda',   'Saint Lucia', 
                   'Saint Vincent and the Grenadines', 'Sao Tome and Principe',
-                  'Seychelles', 'Sierra Leone', 'South Sudan', 'Sudan', 'Suriname', 'Syria', 'Thailand',
+                  'Seychelles', 'Sierra Leone', 'South Sudan', 'Sudan', 'Suriname', 'Syria',
                   'Tanzania', 'Tajikistan', 'Togo', 'Uganda', 'West Bank and Gaza',
                   'Yemen', 'Zambia', 'Zimbabwe']
 
@@ -231,69 +231,69 @@ except:
 # In[23]:
 
 
-# Thailand data
-try:
-  url_s = 'https://data.go.th/dataset/covid-19-daily'
-  t = requests.get(url_s).text
-  filenames = re.findall('https:(.+?)\.csv', t)
-  url = 'https:' + filenames[0] + '.csv'
+# # Thailand data
+# try:
+#   url_s = 'https://data.go.th/dataset/covid-19-daily'
+#   t = requests.get(url_s).text
+#   filenames = re.findall('https:(.+?)\.csv', t)
+#   url = 'https:' + filenames[0] + '.csv'
 
-  df_t = pd.read_csv(url)
-  ## fix bad year from dates 2563-11-21 and 1963-10-17 to 2020
-  #df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'[0-9][0-9][0-9][0-9]':'2020'},regex=True)
-  #df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'15/15':'15/12'},regex=True)
-  df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'24/1/0202':'1/24/2021'},regex=True)
-  df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'2564':'2021'},regex=True)
-  df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'2563':'2020'},regex=True)
-  df_t = df_t.set_index(['announce_date'])
-  df_t.index.name = None
-  # The nationality column is not important
-  #df_t = df_t[df_t[df_t.columns[3]]=='Thailand']
+#   df_t = pd.read_csv(url)
+#   ## fix bad year from dates 2563-11-21 and 1963-10-17 to 2020
+#   #df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'[0-9][0-9][0-9][0-9]':'2020'},regex=True)
+#   #df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'15/15':'15/12'},regex=True)
+#   df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'24/1/0202':'1/24/2021'},regex=True)
+#   df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'2564':'2021'},regex=True)
+#   df_t['announce_date'] = df_t['announce_date'].astype(str).replace({'2563':'2020'},regex=True)
+#   df_t = df_t.set_index(['announce_date'])
+#   df_t.index.name = None
+#   # The nationality column is not important
+#   #df_t = df_t[df_t[df_t.columns[3]]=='Thailand']
 
-  df_t['new'] = 1
-  print(df_t)
-  #df_t.loc[pd.isna(df_t[df_t['risk']]),'new'] = 1
-  df_t['risk'] = df_t['risk'].replace(np.nan, '', regex=True)
-  df_t.loc[df_t['risk']=='State Quarantine','new'] = 0
-  df_t.loc[df_t['risk']=='ผู้ที่เดินทางมาจากต่างประเทศ และเข้า OQ','new'] = 0
-  df_t.loc[df_t['risk']=='ผู้ที่เดินทางมาจากต่างประเทศ และเข้า ASQ/ALQ','new'] = 0
-  df_t.loc[df_t['risk']=='คนต่างชาติเดินทางมาจากต่างประเทศ','new'] = 0
-
-
-  tod = pd.to_datetime('today')
-  idx = pd.date_range('01-22-2020', tod)
-  df_t.index = pd.to_datetime(df_t.index)
-  df_t = df_t.groupby(df_t.index).sum()
-  #df_t.index = pd.to_datetime(df_t.index)
-  df_t = df_t.sort_index()
-  df_t = df_t[1:]
-  df_t = df_t.reindex(idx, fill_value=0)
-  new_thailand = df_t[1:-2]
-
-  # Oct 13 fix: 
-  # add in 3 cases of local transmission missing from our filter because "nationality" is Myanmar/Burma rather than "Thailand"
-  #man1 = pd.to_datetime('2020-10-13')
-  #new_thailand.loc[man1,'new'] = 3
-
-  # In[24]:
+#   df_t['new'] = 1
+#   print(df_t)
+#   #df_t.loc[pd.isna(df_t[df_t['risk']]),'new'] = 1
+#   df_t['risk'] = df_t['risk'].replace(np.nan, '', regex=True)
+#   df_t.loc[df_t['risk']=='State Quarantine','new'] = 0
+#   df_t.loc[df_t['risk']=='ผู้ที่เดินทางมาจากต่างประเทศ และเข้า OQ','new'] = 0
+#   df_t.loc[df_t['risk']=='ผู้ที่เดินทางมาจากต่างประเทศ และเข้า ASQ/ALQ','new'] = 0
+#   df_t.loc[df_t['risk']=='คนต่างชาติเดินทางมาจากต่างประเทศ','new'] = 0
 
 
-  # create new column 'Thailand' with cumulative cases for the purpose of updating Thailand column in pivot_cases
-  new_thailand['Thailand'] = new_thailand['new'].cumsum()
+#   tod = pd.to_datetime('today')
+#   idx = pd.date_range('01-22-2020', tod)
+#   df_t.index = pd.to_datetime(df_t.index)
+#   df_t = df_t.groupby(df_t.index).sum()
+#   #df_t.index = pd.to_datetime(df_t.index)
+#   df_t = df_t.sort_index()
+#   df_t = df_t[1:]
+#   df_t = df_t.reindex(idx, fill_value=0)
+#   new_thailand = df_t[1:-2]
 
-  # only include 'Thailand' column
-  new_thailand = new_thailand[['Thailand']]
+#   # Oct 13 fix: 
+#   # add in 3 cases of local transmission missing from our filter because "nationality" is Myanmar/Burma rather than "Thailand"
+#   #man1 = pd.to_datetime('2020-10-13')
+#   #new_thailand.loc[man1,'new'] = 3
 
-  pivot_cases.update(new_thailand)
+#   # In[24]:
 
 
-  # In[25]:
+#   # create new column 'Thailand' with cumulative cases for the purpose of updating Thailand column in pivot_cases
+#   new_thailand['Thailand'] = new_thailand['new'].cumsum()
+
+#   # only include 'Thailand' column
+#   new_thailand = new_thailand[['Thailand']]
+
+#   pivot_cases.update(new_thailand)
 
 
-  # Check Thailand update
-  pivot_cases['Thailand']
-except:
-  pass
+#   # In[25]:
+
+
+#   # Check Thailand update
+#   pivot_cases['Thailand']
+# except:
+#   pass
 
 ### Australia correction (only local transmission)
 
