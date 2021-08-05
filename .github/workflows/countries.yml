@@ -39,8 +39,9 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Process Data
       run: |
-        python update.py
-
+        python ecv-countries-green/update.py
+        python ecv-countries-orange/update.py
+        python ecv-countries-red/update.py
         
     - name: commit files
       run: |
