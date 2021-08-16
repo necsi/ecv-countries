@@ -15,7 +15,7 @@ var margin = {top: 58, right: 30, bottom: 58, left: 30},
   d3.csv( host + "/result.csv", function(dataset) {
 
   var url = new URL(window.location);
-  var color = url.searchParams.get("color");
+  var color = "green" //url.searchParams.get("color");
 
   var data = [];  // storing based on color 
   for(var i = 0; i < dataset.length; i++){
