@@ -723,11 +723,11 @@ country_final['date'] = country_final['date'] + datetime.timedelta(days=1)
 ## Remove the 'cases' column to match format of Era's state result file 
 result = country_final[['country','date','new_cases','avg_cases','total_cases','recent_new','color']]
 
-result.to_csv(r'country-plots/result.csv', index=False)
 
 result.to_csv(r'ecv-countries-green/result.csv', index=False)
 result.to_csv(r'ecv-countries-orange/result.csv', index=False)
 result.to_csv(r'ecv-countries-red/result.csv', index=False)
+result.to_csv(r'result.csv', index=False)
 
 # In[69]:
 

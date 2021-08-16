@@ -1,44 +1,3 @@
-
-
-function adjustSize(){
-  var containerwidth = window.innerWidth;
-  var containerheight = window.innerHeight;
-
-  var svgwidth = 270;
-  var svgheight = 220;
-
-  n_cols = Math.sqrt(n_items*svgheight*containerwidth/(svgwidth*containerheight));
-  n_cols = Math.floor(n_cols)
-  n_rows = Math.ceil(n_items/n_cols);
-  console.log('n_cols ' + n_cols)
-  console.log('n_rows ' + n_rows)
-
-  contentwidth = n_cols*svgwidth;
-  contentheight = n_rows*svgheight;
-
-  width_pct = 0;
-
-  console.log('containerwidth ' + containerwidth)
-  console.log('containerheight ' + containerheight)
-  console.log('contentwidth ' + contentwidth)
-  console.log('contentheight ' + contentheight)
-  if(containerwidth/containerheight < contentwidth/contentheight){
-    width_pct = 1.0/n_cols;
-    console.log('using plain width with pct ' + width_pct);
-  }else{
-    item_height = containerheight/n_rows;
-    item_width = item_height*svgwidth/svgheight;
-    width_pct = item_width/containerwidth;
-    console.log('using calculated width with pct ' + width_pct)
-    console.log('item height ' + item_height)
-    console.log('item width ' + item_width)
-  }
-
-  
-  width_pct_str = Math.round(100*width_pct);
-}
-
-
 //var margin = {top: 50, right: 20, bottom: 50, left: 20},
 var margin = {top: 58, right: 30, bottom: 58, left: 30},
 //var margin = {top: 50, right: 30, bottom: 50, left: 30},
@@ -47,7 +6,11 @@ var margin = {top: 58, right: 30, bottom: 58, left: 30},
  
 //Read the data from csv file
 // d3.csv("./result.csv", function(data) {
-  d3.csv("./result.csv", function(dataset) {
+
+  // FOR TESTING: change to localhost
+  // FOR PRODUCTION: change to github
+  host = 'http://localhost/ecv-countries'
+  d3.csv( host + "/result.csv", function(dataset) {
 
   var url = new URL(window.location);
   var color = url.searchParams.get("color");
@@ -58,7 +21,6 @@ var margin = {top: 58, right: 30, bottom: 58, left: 30},
       data.push(dataset[i]);
     }
   }
-
   var dataOrganized = d3.nest() // organize all data by country 
     .key(function(d) { if(d.color == color){ return d.country;}})  // keys are country, values are the data associated w the country
     .entries(data);
@@ -74,58 +36,13 @@ var margin = {top: 58, right: 30, bottom: 58, left: 30},
   var line = d3.local();
   var yy = d3.local();
 
-
-  n_items = 34
-  
-  
-  var containerwidth = window.innerWidth;
-  var containerheight = window.innerHeight;
-
-  var svgwidth = 270;
-  var svgheight = 220;
-
-  n_cols = Math.sqrt(n_items*svgheight*containerwidth/(svgwidth*containerheight));
-  n_cols = Math.floor(n_cols)
-  n_rows = Math.ceil(n_items/n_cols);
-  console.log('n_cols ' + n_cols)
-  console.log('n_rows ' + n_rows)
-
-  contentwidth = n_cols*svgwidth;
-  contentheight = n_rows*svgheight;
-
-  width_pct = 0;
-
-  console.log('containerwidth ' + containerwidth)
-  console.log('containerheight ' + containerheight)
-  console.log('contentwidth ' + contentwidth)
-  console.log('contentheight ' + contentheight)
-  if(containerwidth/containerheight < contentwidth/contentheight){
-    width_pct = 1.0/n_cols;
-    console.log('using plain width with pct ' + width_pct);
-  }else{
-    item_height = containerheight/n_rows;
-    item_width = item_height*svgwidth/svgheight;
-    width_pct = item_width/containerwidth;
-    console.log('using calculated width with pct ' + width_pct)
-    console.log('item height ' + item_height)
-    console.log('item width ' + item_width)
-  }
-
-  
-  width_pct_str = Math.round(100*width_pct);
-
-
   var svg = d3.select("#my_dataviz")
     .selectAll("uniqueChart")
     .data(dataOrganized)
     .enter()
     .append("svg")
-      //.attr("width", width_pct_str + '%')
-      //.attr("height", heightratio + '%')
-      .attr("preserveAspectRatio", "xMinYMin meet")
-      .attr("viewBox", "0 0 270 220")
-      // .attr("width", width + margin.left + margin.right)
-      // .attr("height", height + margin.top + margin.bottom)
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
     .append("g")
       .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")")
@@ -145,9 +62,6 @@ var margin = {top: 58, right: 30, bottom: 58, left: 30},
         .x(function(d) { return x(d3.timeParse("%Y-%m-%d")(d.date)); })
         .y(function(d) { return ty(+d.avg_cases); }));
     });
-  
-  my_svg = d3.select("#my_dataviz").selectAll('svg')
-  my_svg.attr("width", width_pct_str + '%')
 
   svg
     .append("g")
@@ -265,6 +179,4 @@ var margin = {top: 58, right: 30, bottom: 58, left: 30},
           "translate(" + ((width-margin.left)/2) + " ," + (height+55) + ")") //centers titles
     .text(function(d){ return("Recent New/Day: "+ d3.format(",")(Math.floor(d.values[d.values.length-1].recent_new)))})
     .style("fill", "grey");
-
-
 })
