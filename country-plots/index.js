@@ -7,9 +7,11 @@ var margin = {top: 58, right: 30, bottom: 58, left: 30},
 //Read the data from csv file
 // d3.csv("./result.csv", function(data) {
 
-  // FOR TESTING: change to localhost
-  // FOR PRODUCTION: change to github
-  host = 'http://localhost/ecv-countries'
+  // FOR TESTING: change to ecv-countries/localhost
+  // FOR PRODUCTION: change to github.io
+  //host = '/localhost/ecv-countries'
+  //host = 'https://necsi.github.io/ecv-countries/country-plots'
+  host = '';
   d3.csv( host + "/result.csv", function(dataset) {
 
   var url = new URL(window.location);
