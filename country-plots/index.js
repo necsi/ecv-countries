@@ -185,7 +185,7 @@ function build_chart(color, dataset) {
 // FOR TESTING: change to localhost
 // FOR PRODUCTION: change to github.io
 //host = '/localhost/ecv-countries'
-host = 'https://necsi.github.io/ecv-countries/country-plots'
+host = 'https://necsi.github.io/ecv-countries'
 
 colors = ['green', 'orange', 'red'];
 my_div = "";
