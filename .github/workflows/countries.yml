@@ -42,6 +42,7 @@ jobs:
         python ecv-countries-green/update.py
         python ecv-countries-orange/update.py
         python ecv-countries-red/update.py
+        python country-plots/update.py
         
     - name: commit files
       run: |

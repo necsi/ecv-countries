@@ -181,9 +181,6 @@ function build_chart(color, dataset) {
 }
 
 
-function print_color(color){
-  console.log('within!', color);
-}
 
 // FOR TESTING: change to localhost
 // FOR PRODUCTION: change to github.io
@@ -197,8 +194,7 @@ for(var i = 0; i < colors.length; i++){
   color = colors[i];
 
   console.log(color)
-  bound = print_color.bind(null, color);
-  bound();
+
   //d3.csv( host + "/result.csv", build_chart);
   bound = build_chart.bind(null, color);
   d3.csv(host + "/result.csv", bound);
